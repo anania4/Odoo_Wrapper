@@ -396,6 +396,7 @@ class OdooWebView extends StatefulWidget {
 class _OdooWebViewState extends State<OdooWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -413,8 +414,19 @@ class _OdooWebViewState extends State<OdooWebView> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) => setState(() => _isLoading = true),
+          onPageStarted: (_) {
+            setState(() {
+              _isLoading = true;
+              _hasError = false;
+            });
+          },
           onPageFinished: (_) => setState(() => _isLoading = false),
+          onWebResourceError: (error) {
+            setState(() {
+              _isLoading = false;
+              _hasError = true;
+            });
+          },
         ),
       )
       ..loadRequest(Uri.parse('http://erp.messeret.com/odoo/'));
@@ -438,10 +450,53 @@ class _OdooWebViewState extends State<OdooWebView> {
           child: Stack(
             children: [
               // Full-screen WebView
-              WebViewWidget(controller: _controller),
+              if (!_hasError) WebViewWidget(controller: _controller),
+
+              // Error View
+              if (_hasError)
+                Positioned.fill(
+                  child: Container(
+                    color: const Color(0xFF14212E),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.wifi_off,
+                          size: 64,
+                          color: Colors.white54,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'No connection',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () => _controller.reload(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF14212E),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
               // Subtle Loading Indicator
-              if (_isLoading)
+              if (_isLoading && !_hasError)
                 const Positioned(
                   top: 0,
                   left: 0,

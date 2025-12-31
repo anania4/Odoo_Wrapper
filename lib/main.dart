@@ -429,7 +429,7 @@ class _OdooWebViewState extends State<OdooWebView> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://erp.messeret.com/odoo/'));
+      ..loadRequest(Uri.parse('http://91.107.204.59:10018/odoo'));
   }
 
   Future<bool> _onWillPop() async {

@@ -1,0 +1,32 @@
+name: odoo_wrapper
+description: "A Flutter Odoo WebView wrapper"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  webview_flutter: ^4.2.2
+  shared_preferences: ^2.2.2
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.2
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/MEFS.jpg"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/mefs_splash.png
+    - assets/images/paperless_logo_blue.png

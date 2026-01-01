@@ -2,6 +2,6 @@
 <network-security-config>
     <base-config cleartextTrafficPermitted="true" />
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">erp.messeret.com</domain>
+        <domain includeSubdomains="true">http://91.107.204.59:10018/odoo</domain>
     </domain-config>
 </network-security-config>

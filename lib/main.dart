@@ -322,32 +322,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const Spacer(),
           // Paperless Tech Solutions Branding
-          Column(
-            children: [
-              const Text(
-                'Powered by',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white38,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Image.asset(
-                'assets/images/paperless_logo_blue.png',
-                height: 40,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Text(
-                    'Paperless Tech Solutions',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+
           const SizedBox(height: 40),
         ],
       ),

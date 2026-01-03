@@ -372,6 +372,7 @@ class _OdooWebViewState extends State<OdooWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _hasError = false;
+  String? _lastError;
 
   @override
   void initState() {
@@ -393,17 +394,28 @@ class _OdooWebViewState extends State<OdooWebView> {
             setState(() {
               _isLoading = true;
               _hasError = false;
+              _lastError = null;
             });
           },
           onPageFinished: (_) => setState(() => _isLoading = false),
           onWebResourceError: (error) {
-            setState(() {
-              _isLoading = false;
-              _hasError = true;
-            });
+            // Only show the error screen if the main frame failed to load.
+            // Ignore errors for sub-resources (images, css, etc.)
+            // Ignore "content length mismatch" errors (often -1 or specific codes)
+            // and only fail on critical connection errors like "Host lookup" (-2)
+            // or "Connection refused" (-6).
+            if (error.errorCode == -2 || error.errorCode == -6 || error.errorCode == -8) {
+              setState(() {
+                _isLoading = false;
+                _hasError = true;
+                _lastError = '${error.description} (${error.errorCode})';
+              });
+            }
           },
         ),
       )
+      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')
+      ..clearCache()
       ..loadRequest(Uri.parse('http://91.107.204.59:10018/odoo'));
   }
 
@@ -442,11 +454,23 @@ class _OdooWebViewState extends State<OdooWebView> {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'No connection',
+                          'Connection Error',
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Text(
+                            _lastError ?? 'Unknown error',
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         const SizedBox(height: 24),

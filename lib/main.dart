@@ -19,9 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFF14212E),
-      ),
+      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFF14212E)),
       home: const SplashScreen(),
     );
   }
@@ -121,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _navigateToApp() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hasSeenOnboarding', true);
-    
+
     if (mounted) {
       Navigator.pushReplacement(
         context,
@@ -154,11 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: PageView(
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
-                children: [
-                  _buildPage1(),
-                  _buildPage2(),
-                  _buildPage3(),
-                ],
+                children: [_buildPage1(), _buildPage2(), _buildPage3()],
               ),
             ),
 
@@ -220,11 +214,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.business_center,
-            size: 120,
-            color: Colors.white,
-          ),
+          const Icon(Icons.business_center, size: 120, color: Colors.white),
           const SizedBox(height: 40),
           const Text(
             'Welcome to MEFS',
@@ -238,11 +228,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 20),
           const Text(
             'Your comprehensive ERP solution for managing your business operations efficiently',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
             textAlign: TextAlign.center,
           ),
         ],
@@ -277,11 +263,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 20),
           const Text(
             'Track inventory, monitor sales, and analyze reports all in one powerful platform',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
             textAlign: TextAlign.center,
           ),
         ],
@@ -295,11 +277,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.rocket_launch,
-            size: 120,
-            color: Colors.white,
-          ),
+          const Icon(Icons.rocket_launch, size: 120, color: Colors.white),
           const SizedBox(height: 40),
           const Text(
             'Get Started',
@@ -313,16 +291,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 20),
           const Text(
             'Everything is ready. Login to access your dashboard and start managing your operations',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.5),
             textAlign: TextAlign.center,
           ),
           const Spacer(),
-          // Paperless Tech Solutions Branding
 
+          // Paperless Tech Solutions Branding
           const SizedBox(height: 40),
         ],
       ),
@@ -351,10 +325,7 @@ class _FeatureIcon extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.white70,
-          ),
+          style: const TextStyle(fontSize: 14, color: Colors.white70),
         ),
       ],
     );
@@ -404,7 +375,9 @@ class _OdooWebViewState extends State<OdooWebView> {
             // Ignore "content length mismatch" errors (often -1 or specific codes)
             // and only fail on critical connection errors like "Host lookup" (-2)
             // or "Connection refused" (-6).
-            if (error.errorCode == -2 || error.errorCode == -6 || error.errorCode == -8) {
+            if (error.errorCode == -2 ||
+                error.errorCode == -6 ||
+                error.errorCode == -8) {
               setState(() {
                 _isLoading = false;
                 _hasError = true;
@@ -414,7 +387,9 @@ class _OdooWebViewState extends State<OdooWebView> {
           },
         ),
       )
-      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')
+      ..setUserAgent(
+        'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+      )
       ..clearCache()
       ..loadRequest(Uri.parse('https://erp.messeret.com/'));
   }

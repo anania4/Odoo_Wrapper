@@ -416,7 +416,7 @@ class _OdooWebViewState extends State<OdooWebView> {
       )
       ..setUserAgent('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36')
       ..clearCache()
-      ..loadRequest(Uri.parse('http://91.107.204.59:10018/odoo'));
+      ..loadRequest(Uri.parse('https://erp.messeret.com/'));
   }
 
   Future<bool> _onWillPop() async {

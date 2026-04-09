@@ -2,9 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Set adaptive status bar
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFF14212E),
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
+  
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -59,26 +74,32 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF14212E),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/mefs_splash.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(
-                    Icons.business_center,
-                    size: 80,
-                    color: Colors.white54,
-                  ),
-                );
-              },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF14212E),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/mefs_splash.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(
+                      Icons.business_center,
+                      size: 80,
+                      color: Colors.white54,
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -130,79 +151,85 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF14212E),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Skip Button
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: _navigateToApp,
-                child: const Text(
-                  'Skip',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              ),
-            ),
-
-            // PageView
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: _onPageChanged,
-                children: [_buildPage1(), _buildPage2(), _buildPage3()],
-              ),
-            ),
-
-            // Dot Indicators
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                3,
-                (index) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 12 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? Colors.white
-                        : Colors.white30,
-                    borderRadius: BorderRadius.circular(4),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF14212E),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Skip Button
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _navigateToApp,
+                  child: const Text(
+                    'Skip',
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              // PageView
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: _onPageChanged,
+                  children: [_buildPage1(), _buildPage2(), _buildPage3()],
+                ),
+              ),
 
-            // Next/Get Started Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _skipOrNext,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF14212E),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  child: Text(
-                    _currentPage == 2 ? 'Get Started' : 'Next',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              // Dot Indicators
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  3,
+                  (index) => Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: _currentPage == index ? 12 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _currentPage == index
+                          ? Colors.white
+                          : Colors.white30,
+                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Next/Get Started Button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _skipOrNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF14212E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: Text(
+                      _currentPage == 2 ? 'Get Started' : 'Next',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -344,11 +371,24 @@ class _OdooWebViewState extends State<OdooWebView> {
   bool _isLoading = true;
   bool _hasError = false;
   String? _lastError;
+  int _backPressCount = 0;
 
   @override
   void initState() {
     super.initState();
+    _requestPermissions();
+    _initializeWebView();
+  }
 
+  Future<void> _requestPermissions() async {
+    await [
+      Permission.camera,
+      Permission.storage,
+      Permission.photos,
+    ].request();
+  }
+
+  void _initializeWebView() {
     // Enable rotation for WebView
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -359,22 +399,22 @@ class _OdooWebViewState extends State<OdooWebView> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..enableZoom(true)
+      ..setBackgroundColor(const Color(0xFF14212E))
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) {
+          onPageStarted: (url) {
             setState(() {
               _isLoading = true;
               _hasError = false;
               _lastError = null;
             });
           },
-          onPageFinished: (_) => setState(() => _isLoading = false),
+          onPageFinished: (url) {
+            setState(() => _isLoading = false);
+            _injectCustomCSS();
+          },
           onWebResourceError: (error) {
-            // Only show the error screen if the main frame failed to load.
-            // Ignore errors for sub-resources (images, css, etc.)
-            // Ignore "content length mismatch" errors (often -1 or specific codes)
-            // and only fail on critical connection errors like "Host lookup" (-2)
-            // or "Connection refused" (-6).
             if (error.errorCode == -2 ||
                 error.errorCode == -6 ||
                 error.errorCode == -8) {
@@ -385,13 +425,87 @@ class _OdooWebViewState extends State<OdooWebView> {
               });
             }
           },
+          onNavigationRequest: (request) {
+            final uri = Uri.parse(request.url);
+            
+            // Keep navigation within Odoo domain
+            if (uri.host.contains('messeret.com') || 
+                uri.host.contains('localhost') ||
+                uri.path.startsWith('/odoo')) {
+              return NavigationDecision.navigate;
+            }
+            
+            // Block external navigation
+            return NavigationDecision.prevent;
+          },
         ),
       )
       ..setUserAgent(
-        'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 12; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 OdooMobile/1.0',
       )
-      ..clearCache()
-      ..loadRequest(Uri.parse('https://erp.messeret.com/'));
+      ..addJavaScriptChannel(
+        'FlutterChannel',
+        onMessageReceived: (message) {
+          // Handle messages from WebView if needed
+        },
+      );
+
+    // Configure platform-specific settings
+    if (Platform.isAndroid) {
+      _configureAndroidWebView();
+    }
+
+    // Load the Odoo URL
+    _controller.loadRequest(Uri.parse('https://erp.messeret.com/web/login'));
+  }
+
+  void _configureAndroidWebView() {
+    // Android-specific WebView configuration will be handled by the platform
+    // File upload support is automatically enabled with proper permissions
+  }
+
+  Future<List<String>> _handleFileUpload() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.any,
+      );
+
+      if (result != null) {
+        return result.files.map((file) => file.path!).toList();
+      }
+    } catch (e) {
+      print('File picker error: $e');
+    }
+    return [];
+  }
+
+  void _injectCustomCSS() {
+    // Inject CSS to improve mobile experience
+    _controller.runJavaScript('''
+      (function() {
+        var style = document.createElement('style');
+        style.textContent = `
+          /* Improve mobile scrolling */
+          body { 
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+          }
+          
+          /* Better touch targets */
+          .btn, button, a {
+            min-height: 44px;
+            min-width: 44px;
+          }
+          
+          /* Hide desktop-only elements */
+          @media (max-width: 768px) {
+            .d-none.d-md-block { display: none !important; }
+          }
+        `;
+        document.head.appendChild(style);
+      })();
+    ''');
   }
 
   Future<bool> _onWillPop() async {
@@ -399,89 +513,215 @@ class _OdooWebViewState extends State<OdooWebView> {
       _controller.goBack();
       return false; // Prevent closing app
     }
-    return true; // Use default behavior (close app)
+    
+    // Double tap to exit
+    if (_backPressCount == 0) {
+      _backPressCount++;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Press back again to exit'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Color(0xFF14212E),
+        ),
+      );
+      
+      // Reset counter after 2 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        _backPressCount = 0;
+      });
+      
+      return false;
+    }
+    
+    return true; // Exit app
+  }
+
+  void _showRefreshDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF14212E),
+        title: const Text('Refresh Page', style: TextStyle(color: Colors.white)),
+        content: const Text(
+          'This will reload the current page. Any unsaved changes will be lost.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _controller.reload();
+            },
+            child: const Text('Refresh', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: const Color(0xFF14212E),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              // Full-screen WebView
-              if (!_hasError) WebViewWidget(controller: _controller),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          backgroundColor: const Color(0xFF14212E),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                // Full-screen WebView
+                if (!_hasError) 
+                  Column(
+                    children: [
+                      // Optional: Add a refresh button in app bar
+                      Container(
+                        height: 0, // Hidden by default
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: _showRefreshDialog,
+                              icon: const Icon(Icons.refresh, color: Colors.white70),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(child: WebViewWidget(controller: _controller)),
+                    ],
+                  ),
 
-              // Error View
-              if (_hasError)
-                Positioned.fill(
-                  child: Container(
-                    color: const Color(0xFF14212E),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.wifi_off,
-                          size: 64,
-                          color: Colors.white54,
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'Connection Error',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                // Error View
+                if (_hasError)
+                  Positioned.fill(
+                    child: Container(
+                      color: const Color(0xFF14212E),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.wifi_off,
+                            size: 64,
+                            color: Colors.white54,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Text(
-                            _lastError ?? 'Unknown error',
-                            style: const TextStyle(
-                              color: Colors.redAccent,
-                              fontSize: 14,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () => _controller.reload(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF14212E),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Connection Error',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          child: const Text('Retry'),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            child: Text(
+                              _lastError ?? 'Unable to connect to Odoo server',
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => _controller.reload(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: const Color(0xFF14212E),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                ),
+                                child: const Text('Retry'),
+                              ),
+                              const SizedBox(width: 16),
+                              OutlinedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _hasError = false;
+                                    _isLoading = true;
+                                  });
+                                  _controller.loadRequest(
+                                    Uri.parse('https://erp.messeret.com/web/login')
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white70,
+                                  side: const BorderSide(color: Colors.white70),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                ),
+                                child: const Text('Home'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-              // Subtle Loading Indicator
-              if (_isLoading && !_hasError)
-                const Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: LinearProgressIndicator(
-                    minHeight: 2,
-                    backgroundColor: Colors.transparent,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                // Enhanced Loading Indicator
+                if (_isLoading && !_hasError)
+                  Positioned.fill(
+                    child: Container(
+                      color: const Color(0xFF14212E).withOpacity(0.8),
+                      child: const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Loading Odoo...',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-            ],
+
+                // Subtle progress bar at top
+                if (_isLoading && !_hasError)
+                  const Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: LinearProgressIndicator(
+                      minHeight: 2,
+                      backgroundColor: Colors.transparent,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white70),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
